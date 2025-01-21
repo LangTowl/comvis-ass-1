@@ -8,7 +8,6 @@ path = 'dog.bmp'
 image = cv2.imread(path)
 new_image = image.copy()
 
-
 def render_histogram(reference):
     # Split the image into its color channels
     channels = cv2.split(reference)
@@ -36,8 +35,6 @@ def render_histogram(reference):
 
     return hist_canvas
 
-
-# Create a function to change brightness
 def update_brightness(val):
     # Adjust brightness based on slider value
     alpha = val / 128
