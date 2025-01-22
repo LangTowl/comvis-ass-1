@@ -80,5 +80,28 @@ def update_contrast(val):
     cv2.imshow('Assignment 1 - Lang Towl', canvas)
 
 def render_window():
+    # Generate windows for rendering
+    cv2.namedWindow('Assignment 1 - Lang Towl', cv2.WINDOW_AUTOSIZE)
+    cv2.namedWindow('Controller', cv2.WINDOW_AUTOSIZE)
+    cv2.resizeWindow('Controller', 1000, 1000)
+
+    # Render sliders
+    cv2.createTrackbar('Brightness', 'Controller', 128, 255, update_brightness)
+    cv2.createTrackbar('Contrast', 'Controller', 128, 255, update_contrast)
+
+    # Call update functions
     update_brightness(128)
     update_contrast(128)
+
+    while True:
+        # TODO: Add key press escape sequence (e = exit, s = save)
+        key = cv2.waitKey(1) & 0xFF
+
+        if key == ord('s'):
+            print('Saving...\n')
+        elif key == ord('q'):
+            print('Exiting...\n')
+            break
+
+    # Terminate windows
+    cv2.destroyAllWindows()
