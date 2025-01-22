@@ -1,7 +1,9 @@
 import cv2
 import numpy as np
 
-# Path to source image
+
+
+# Path to image source
 path = 'dog.bmp'
 
 # Load image from path
@@ -11,10 +13,10 @@ new_image = image.copy()
 def render_histogram(reference):
     # Split the image into its color channels
     channels = cv2.split(reference)
-    colors = ['blue', 'green', 'red']  # Corresponds to BGR channels
-    channel_colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]  # B, G, R
+    colors = ['blue', 'green', 'red']
+    channel_colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
 
-    # Create a blank canvas to draw the histogram
+    # Create a blank canvas to draw the histogram (might need to change dimensions later?)
     hist_canvas = np.zeros((300, 512, 3), dtype=np.uint8)
 
     for channel, color in zip(channels, channel_colors):

@@ -3,6 +3,7 @@ import cv2
 from utils import path, render_window
 
 
+
 if __name__ == '__main__':
     print(f"Using cv2 version {cv2.__version__}\n")
 
