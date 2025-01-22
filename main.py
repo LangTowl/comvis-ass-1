@@ -1,6 +1,6 @@
 import os
 import cv2
-from utils import path, update_contrast, update_brightness, render_window
+from utils import path, render_window
 
 
 if __name__ == '__main__':

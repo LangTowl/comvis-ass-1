@@ -36,13 +36,15 @@ def render_histogram(reference):
     return hist_canvas
 
 def update_brightness(val):
+    global new_image
+
     # Adjust brightness based on slider value
     alpha = val / 128
-    bright_image = cv2.convertScaleAbs(new_image, alpha=alpha)
+    new_image = cv2.convertScaleAbs(image, alpha = alpha)
 
     # Generate histograms
     image_hist = render_histogram(image)
-    bright_hist = render_histogram(bright_image)
+    bright_hist = render_histogram(new_image)
 
     # Resize histograms to match image dimensions
     height, width, _ = image.shape
@@ -50,7 +52,7 @@ def update_brightness(val):
     resized_bright_hist = cv2.resize(bright_hist, (width, height))
 
     # Generate canvas for rendering
-    image_stack = np.hstack([image, bright_image])
+    image_stack = np.hstack([image, new_image])
     hist_stack = np.hstack([resized_image_hist, resized_bright_hist])
     canvas = np.vstack([image_stack, hist_stack])
 
@@ -58,13 +60,15 @@ def update_brightness(val):
     cv2.imshow('Assignment 1 - Lang Towl', canvas)
 
 def update_contrast(val):
+    global new_image
+
     # Adjust contrast based on slider value
     beta = val - 128
-    contrast_image = cv2.convertScaleAbs(new_image, beta=beta)
+    new_image = cv2.convertScaleAbs(image, beta = beta)
 
     # Generate histograms
     image_hist = render_histogram(image)
-    contrast_hist = render_histogram(contrast_image)
+    contrast_hist = render_histogram(new_image)
 
     # Resize histograms to match image dimensions
     height, width, _ = image.shape
@@ -72,7 +76,7 @@ def update_contrast(val):
     resized_contrast_hist = cv2.resize(contrast_hist, (width, height))
 
     # Generate canvas for rendering
-    image_stack = np.hstack([image, contrast_image])
+    image_stack = np.hstack([image, new_image])
     hist_stack = np.hstack([resized_image_hist, resized_contrast_hist])
     canvas = np.vstack([image_stack, hist_stack])
 
@@ -94,11 +98,17 @@ def render_window():
     update_contrast(128)
 
     while True:
-        # TODO: Add key press escape sequence (e = exit, s = save)
+        # Listen for key press
         key = cv2.waitKey(1) & 0xFF
 
         if key == ord('s'):
-            print('Saving...\n')
+            print('Attempting to Save...\n')
+
+            try:
+                cv2.imwrite(path, new_image)
+                print("Image saved!\n")
+            except Exception as e:
+                print(f'Error Saving Image: {e}\n')
         elif key == ord('q'):
             print('Exiting...\n')
             break
