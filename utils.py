@@ -10,6 +10,10 @@ path = 'dog.bmp'
 image = cv2.imread(path)
 new_image = image.copy()
 
+# Global initializations of brightness and contast
+current_brightness = 128
+current_contrast = 128
+
 def render_histogram(reference):
     # Split the image into its color channels
     channels = cv2.split(reference)
@@ -37,53 +41,40 @@ def render_histogram(reference):
 
     return hist_canvas
 
-def update_brightness(val):
+def update_image():
     global new_image
 
-    # Adjust brightness based on slider value
-    alpha = val / 128
-    new_image = cv2.convertScaleAbs(image, alpha = alpha)
+    # Apply cumulative adjustments for brightness and contrast
+    alpha = current_brightness / 128
+    beta = current_contrast - 128
+    new_image = cv2.convertScaleAbs(image, alpha = alpha, beta = beta)
 
     # Generate histograms
     image_hist = render_histogram(image)
-    bright_hist = render_histogram(new_image)
+    modified_hist = render_histogram(new_image)
 
     # Resize histograms to match image dimensions
     height, width, _ = image.shape
     resized_image_hist = cv2.resize(image_hist, (width, height))
-    resized_bright_hist = cv2.resize(bright_hist, (width, height))
+    resized_modified_hist = cv2.resize(modified_hist, (width, height))
 
     # Generate canvas for rendering
     image_stack = np.hstack([image, new_image])
-    hist_stack = np.hstack([resized_image_hist, resized_bright_hist])
+    hist_stack = np.hstack([resized_image_hist, resized_modified_hist])
     canvas = np.vstack([image_stack, hist_stack])
 
     # Display the image with adjusted brightness
     cv2.imshow('Assignment 1 - Lang Towl', canvas)
 
+def update_brightness(val):
+    global current_brightness
+    current_brightness = val
+    update_image()
+
 def update_contrast(val):
-    global new_image
-
-    # Adjust contrast based on slider value
-    beta = val - 128
-    new_image = cv2.convertScaleAbs(image, beta = beta)
-
-    # Generate histograms
-    image_hist = render_histogram(image)
-    contrast_hist = render_histogram(new_image)
-
-    # Resize histograms to match image dimensions
-    height, width, _ = image.shape
-    resized_image_hist = cv2.resize(image_hist, (width, height))
-    resized_contrast_hist = cv2.resize(contrast_hist, (width, height))
-
-    # Generate canvas for rendering
-    image_stack = np.hstack([image, new_image])
-    hist_stack = np.hstack([resized_image_hist, resized_contrast_hist])
-    canvas = np.vstack([image_stack, hist_stack])
-
-    # Display the image with adjusted contrast
-    cv2.imshow('Assignment 1 - Lang Towl', canvas)
+    global current_contrast
+    current_contrast = val
+    update_image()
 
 def render_window():
     # Generate windows for rendering
@@ -95,9 +86,8 @@ def render_window():
     cv2.createTrackbar('Brightness', 'Controller', 128, 255, update_brightness)
     cv2.createTrackbar('Contrast', 'Controller', 128, 255, update_contrast)
 
-    # Call update functions
-    update_brightness(128)
-    update_contrast(128)
+    # Call update function
+    update_image()
 
     while True:
         # Listen for key press
